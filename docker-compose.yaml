@@ -1,0 +1,38 @@
+version: '3'
+services:
+  web:
+    depends_on:
+      - postgres_db
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: django-k8s:v1
+    environment:
+      - PORT=8000
+      - POSTGRES_DB=dockerkubes
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=kosamtech
+      - POSTGRES_HOST=postgres_db
+      - POSTGRES_PORT=5432
+    ports:
+      - 8000:8000 
+    command: sh -c "chmod +x /app/migrate.sh && sh /app/migrate.sh && sh /app/entrypoint.sh"
+    volumes:
+      - staticfiles:/app/staticfiles
+
+  postgres_db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=kosamtech
+      - POSTGRES_DB=dockerkubes
+    ports:
+      - 5433:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data:
+  staticfiles:
+    external: true
