@@ -1,0 +1,28 @@
+name: Build Container
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    environment:
+      name: testing
+
+    steps:
+      - name: pulling code
+        uses: actions/checkout@v2
+      - name: install python version 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'  
+      - name: update pip
+        run: python -m pip install --upgrade pip
+      - name: install all dependencies
+        run: pip install -r requirements.txt      
+    

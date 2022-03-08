@@ -15,9 +15,32 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: testing
+    env:
+      DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+      POSTGRES_PASSWORD: x1XlM-juH5LWJseJS113iQtfXL9Zf8TBBo3fXRuRh6E
+      POSTGRES_DB: dockerkubes
+      POSTGRES_USER: kosamtech
+      DATABASE_ENGINE: ${{ secrets.DATABASE_ENGINE }}
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
     defaults:
       run:
         working-directory: .  
+
+    services:
+      postgres_db:
+        image: postgres:14
+        env:
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5  
   
     steps:
       - name: pulling get repo
