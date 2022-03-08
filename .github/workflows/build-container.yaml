@@ -1,28 +1,46 @@
-name: Build Container
+name: Build Docker Container
 
 on:
   workflow_call:
   workflow_dispatch:
+  push:
+    branches:
+      - "master"
+  pull_request:
+    branches:
+      - "master"    
+
 
 
 jobs:
-  build:
+  test_django:
+    uses: kkthecompguy/k8s-django-prod/.github/workflows/test-django.yaml@master
+  docker_build:
+    needs: [test_django]
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: .
+    env:
+      DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+      CLUSTER_NAME: django-k8s-cluster
     environment:
       name: testing
 
     steps:
       - name: pulling code
         uses: actions/checkout@v2
-      - name: install python version 3.9
-        uses: actions/setup-python@v2
+      - name: install doctl
+        uses: digitalocean/actions-doctl@v2 
         with:
-          python-version: '3.9'  
-      - name: update pip
-        run: python -m pip install --upgrade pip
-      - name: install all dependencies
-        run: pip install -r requirements.txt      
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: login to DO Container registry with short-lived creds
+        run: doctl registry login --expiry-seconds 1200
+      - name: build container image
+        working-directory: .
+        run: |
+          docker build -f Dockerfile \
+            -t registry.digitalocean.com/kt-k8s/django-k8s-web:latest \
+            -t registry.digitalocean.com/kt-k8s/django-k8s-web:${GITHUB_SHA::7}-${GITHUB_RUN_ID::5} \
+            .
+      - name: push image
+        run: |
+          docker push registry.digitalocean.com/kt-k8s/django-k8s-web --all-tags      
     
