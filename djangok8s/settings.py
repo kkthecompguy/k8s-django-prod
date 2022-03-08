@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',
     'posts',
 ]
 
@@ -159,4 +160,5 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = BASE_DIR / "static-root"
-MEDIA_ROOT = BASE_DIR / "media-root"
+
+from .cdn.conf import * # noqa

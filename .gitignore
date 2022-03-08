@@ -4,8 +4,6 @@
 .kube/
 creds.py
 
-staticfiles
-static-root
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

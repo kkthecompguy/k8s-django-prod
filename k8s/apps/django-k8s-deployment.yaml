@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: django-k8s-deployment
+  labels:
+    app: django-k8s-deployment
 spec:
   replicas: 3
   selector:
@@ -13,23 +15,19 @@ spec:
         app: django-k8s-deployment
     spec:
       containers:
-      - name: django-k8s-web
-        image: registry.digitalocean.com/kt-k8s/django-k8s-web:latest
-        imagePullPolicy: Always
-        envFrom:
-          - secretRef:
-              name: django-k8s-prod-env
-        env:
-          - name: "PORT"
-            value: "8000"    
-        resources:
-          limits:
-            memory: "128Mi"
-            cpu: "500m"
-        ports:
-        - containerPort: 8000
+        - name: django-k8s-web
+          image: registry.digitalocean.com/kt-k8s/django-k8s-web:latest
+          imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: django-k8s-prod-env
+          env:
+            - name: PORT
+              value: "8001"
+          ports: 
+            - containerPort: 8001
       imagePullSecrets:
-        - name: kt-k8s 
+        - name: kt-k8s
 
 ---
 
@@ -39,10 +37,10 @@ metadata:
   name: django-k8s-service
 spec:
   type: LoadBalancer
-  selector:
-    app: django-k8s-deployment
   ports:
-  - port: 80
-    name: http
-    protocol: TCP
-    targetPort: 8000
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8001
+  selector:
+    app: django-k8s-deployment 
