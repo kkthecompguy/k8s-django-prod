@@ -26,7 +26,9 @@ SECRET_KEY = config('DJANGO_SECRET_KEY', default="testsecretkey")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=False, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOST = config("ALLOWED_HOST", default="localhost")
+
+ALLOWED_HOSTS = ["127.0.0.1", ALLOWED_HOST]
 
 
 # Application definition
@@ -74,12 +76,12 @@ WSGI_APPLICATION = 'djangok8s.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 DB_USERNAME = config("POSTGRES_USER", default="")
@@ -91,16 +93,16 @@ DB_IGNORE_SSL = config("DB_IGNORE_SSL", default=False, cast=bool)
 DB_ENGINE = config("DATABASE_ENGINE", default="django.db.backends.sqlite3")
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': DB_ENGINE,
-#         'NAME': DB_DATABASE,
-#         'USER': DB_USERNAME,
-#         'PASSWORD': DB_PASSWORD,
-#         'HOST': DB_HOST,
-#         'PORT': DB_PORT
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': DB_ENGINE,
+        'NAME': DB_DATABASE,
+        'USER': DB_USERNAME,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT
+    }
+}
 
 
 if not DB_IGNORE_SSL:
