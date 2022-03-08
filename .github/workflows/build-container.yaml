@@ -16,8 +16,8 @@ jobs:
   test_django:
     uses: kkthecompguy/k8s-django-prod/.github/workflows/test-django.yaml@master
   docker_build:
-    needs: [test_django]
     runs-on: ubuntu-latest
+    needs: [test_django]
     env:
       DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
       CLUSTER_NAME: django-k8s-cluster
@@ -28,7 +28,7 @@ jobs:
       - name: pulling code
         uses: actions/checkout@v2
       - name: install doctl
-        uses: digitalocean/actions-doctl@v2 
+        uses: digitalocean/action-doctl@v2 
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       - name: login to DO Container registry with short-lived creds
