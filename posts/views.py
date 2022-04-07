@@ -5,7 +5,7 @@ from .models import Post
 # Create your views here.
 
 def create_post_view(request):
-  for i in range(1000000):
+  for i in range(100):
     Post.objects.create(title=f"Post {i}")
   return JsonResponse({"message", "post created successfully"})  
 
