@@ -7,7 +7,7 @@ from .models import Post
 def create_post_view(request):
   for i in range(100):
     Post.objects.create(title=f"Post {i}")
-  return JsonResponse({"message", "post created successfully"})  
+  return JsonResponse({"message", "post created successfully"}, safe=False)  
 
 
 def list_post_view(request):
